@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="title">
+        Sherlock's photo of the day
+    </div>
+    <div id="app">
+        <span v-if="loading">
+            Loading...
+        </span>
+        <span v-else>
+            <img v-bind:src="imageURL">
+            {{ message }}
+        </span>
+    </div>
+    <script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            imageURL: ''
+        },
+        computed: {
+            loading: function () {
+                return this.imageURL === ''
+            }
+        }
+    })
+
+    const fetchPhotoURL = () => {
+        const serverURL = 'https://us-central1-sherlock-photos.cloudfunctions.net/sherlock_photos'
+        fetch(serverURL)
+            .then((response) => {
+                return response.json()
+            })
+            .then((json) => {
+                console.log(json)
+                app.imageURL = json['photo_link']
+            })
+            .catch((error) => {
+                console.log(`error is : ${error}`)
+            })
+    }
+    fetchPhotoURL()
+    </script>
+</body>
+</html>
